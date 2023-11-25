@@ -45,7 +45,7 @@ export const updateUser = async (req, res) => {
         name,
         about,
       },
-      { new: true },
+      { new: true, runValidators: true },
     ).orFail(() => new NotFoundError('user'));
     res.status(200).send(updateProfile);
   } catch (err) {
@@ -61,7 +61,7 @@ export const updateAvatar = async (req, res) => {
       {
         avatar,
       },
-      { new: true },
+      { new: true, runValidators: true },
     ).orFail(() => new NotFoundError('user'));
     res.status(200).send(newPicAvatar);
   } catch (err) {
