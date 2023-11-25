@@ -5,7 +5,7 @@ import {
   postUser,
   updateUser,
   updateAvatar,
-} from '../controllers/user.js';
+} from '../controllers/user';
 
 const router = Router();
 router.get('/', getAllUser);

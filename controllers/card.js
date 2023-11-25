@@ -1,5 +1,5 @@
-import NotFoundError from '../errors/NotFoundError.js.js';
-import UnauthorizedError from '../errors/UnauthorizedError.js.js';
+import NotFoundError from '../errors/NotFoundError.js';
+import UnauthorizedError from '../errors/UnauthorizedError.js';
 import checkErrors from '../errors/checkErrors.js';
 import Card from '../models/card.js';
 
