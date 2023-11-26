@@ -2,6 +2,7 @@ import NotFoundError from '../errors/NotFoundError.js';
 import UnauthorizedError from '../errors/UnauthorizedError.js';
 import checkErrors from '../errors/checkErrors.js';
 import Card from '../models/card.js';
+import { StatusCodes } from 'http-status-codes';
 
 // GET /cards — возвращает все карточки
 export const getCards = async (req, res) => {
@@ -23,7 +24,7 @@ export const createCard = async (req, res) => {
       owner: req.user._id,
     });
     await card.populate('owner');
-    res.send(card);
+    res.status(StatusCodes.CREATED).send(card);
   } catch (err) {
     checkErrors(err, res);
   }
@@ -39,7 +40,7 @@ export const deleteCard = async (req, res) => {
       throw new UnauthorizedError();
     }
     await cards.deleteOne();
-    res.status(200).send(cards);
+    res.status(StatusCodes.OK).send(cards);
   } catch (err) {
     checkErrors(err, res);
   }
@@ -55,7 +56,7 @@ export const putLike = async (req, res) => {
     )
       .orFail(() => new NotFoundError('card'))
       .populate('owner');
-    res.status(200).send(cardWithUpdatedLike);
+    res.status(StatusCodes.OK).send(cardWithUpdatedLike);
   } catch (err) {
     checkErrors(err, res);
   }
@@ -71,7 +72,7 @@ export const deleteLike = async (req, res) => {
     )
       .orFail(() => new NotFoundError('card'))
       .populate('owner');
-    res.status(200).send(cardWithDeletedLike);
+    res.status(StatusCodes.OK).send(cardWithDeletedLike);
   } catch (err) {
     checkErrors(err, res);
   }

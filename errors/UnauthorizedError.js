@@ -1,5 +1,7 @@
+import { StatusCodes } from 'http-status-codes';
+
 export default class UnauthorizedError extends Error {
-  code = 403;
+  httpCode = StatusCodes.FORBIDDEN;
 
   constructor() {
     super('Недостаточно прав для операции');

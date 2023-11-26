@@ -1,5 +1,7 @@
+import { StatusCodes } from 'http-status-codes';
+
 export default class NotFoundError extends Error {
-  code = 404;
+  httpCode = StatusCodes.NOT_FOUND;
 
   constructor(docType) {
     switch (docType) {
