@@ -35,6 +35,7 @@ userSchema.statics.findUserByCredentials = async function (email, password) {
   if (!matched) {
     throw new UnauthorizedError();
   }
+  delete userInDb.password;
   return userInDb;
 };
 

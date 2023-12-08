@@ -1,7 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import routes from './routes/index.js';
-import { errors } from 'celebrate';
 import checkErrors from './errors/checkErrors.js';
 
 const app = express();
@@ -12,7 +11,6 @@ console.log('MongoDB connected');
 
 app.use(express.json());
 app.use(routes);
-app.use(errors());
 app.use((err, req, res, next) => {
   checkErrors(err, res, next);
 });
