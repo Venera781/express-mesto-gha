@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
-import { isCelebrateError } from "celebrate";
 
 const checkErrors = (err, res, next) => {
   if (res.headersSent) {
@@ -8,8 +7,7 @@ const checkErrors = (err, res, next) => {
   }
   if (
     err instanceof mongoose.Error.CastError ||
-    err instanceof mongoose.Error.ValidationError||
-    isCelebrateError(err)
+    err instanceof mongoose.Error.ValidationError
   ) {
     return res.status(StatusCodes.BAD_REQUEST).send({
       message: `Переданы некорректные данные: ${err.message}`,
