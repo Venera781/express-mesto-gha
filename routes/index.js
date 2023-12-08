@@ -4,8 +4,8 @@ import { Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { celebrate, Joi } from 'celebrate';
 import { login, createUser } from '../controllers/user.js';
-import isEmail from 'validator/lib/isEmail';
-import isURL from 'validator/lib/isURL';
+import isEmail from 'validator/lib/isEmail.js';
+import isURL from 'validator/lib/isURL.js';
 
 const routes = Router();
 
