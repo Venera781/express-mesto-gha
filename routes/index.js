@@ -4,8 +4,6 @@ import { Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { celebrate, Joi } from 'celebrate';
 import { login, createUser } from '../controllers/user.js';
-import isEmail from 'validator/lib/isEmail.js';
-import isURL from 'validator/lib/isURL.js';
 
 const routes = Router();
 
@@ -14,7 +12,7 @@ routes.post(
   '/signin',
   celebrate({
     body: Joi.object().keys({
-      email: Joi.string().required().validate(isEmail),
+      email: Joi.string().required().email(),
       password: Joi.string().required().min(8),
     }),
   }),
@@ -27,8 +25,8 @@ routes.post(
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
-      avatar: Joi.string().validate(isURL),
-      email: Joi.string().required().validate(isEmail),
+      avatar: Joi.string().uri(),
+      email: Joi.string().required().email(),
       password: Joi.string().required().min(8),
     }),
   }),

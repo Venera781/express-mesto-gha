@@ -8,7 +8,6 @@ import {
 } from '../controllers/user.js';
 import { auth } from '../middlewares/auth.js';
 import { celebrate, Joi } from 'celebrate';
-import isURL from 'validator/lib/isURL.js';
 
 const router = Router();
 router.get('/', auth, getAllUser);
@@ -38,7 +37,7 @@ router.patch(
   '/me/avatar',
   celebrate({
     body: Joi.object().keys({
-      avatar: Joi.string().required().validate(isURL),
+      avatar: Joi.string().required().uri(),
     }),
   }),
   auth,
