@@ -1,9 +1,8 @@
 import User from '../models/user.js';
-import checkErrors from '../errors/checkErrors.js';
 import NotFoundError from '../errors/NotFoundError.js';
 import { StatusCodes } from 'http-status-codes';
 import bcrypt from 'bcryptjs';
-import { jwt } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { JWT_EXPIRES, JWT_SECRET } from '../constants/jwt.js';
 
 //GET /users — возвращает всех пользователей
