@@ -1,4 +1,4 @@
-import UnauthorizedError from '../errors/UnauthorizedError';
+import UnauthorizedError from '../errors/UnauthorizedError.js';
 import { JWT_SECRET } from '../constants/jwt.js';
 
 export const auth = async (req, res, next) => {

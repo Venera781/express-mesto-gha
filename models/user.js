@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import UnauthorizedError from '../errors/UnauthorizedError';
+import UnauthorizedError from '../errors/UnauthorizedError.js';
 
 const userSchema = new mongoose.Schema({
   name: {
