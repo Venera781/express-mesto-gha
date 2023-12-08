@@ -1,21 +1,20 @@
 import NotFoundError from '../errors/NotFoundError.js';
-import UnauthorizedError from '../errors/UnauthorizedError.js';
-import checkErrors from '../errors/checkErrors.js';
+import ForbiddenError from '../errors/ForbiddenError.js';
 import Card from '../models/card.js';
 import { StatusCodes } from 'http-status-codes';
 
 // GET /cards — возвращает все карточки
-export const getCards = async (req, res) => {
+export const getCards = async (req, res, next) => {
   try {
     const cards = await Card.find({}).populate('owner');
     res.send(cards);
   } catch (err) {
-    checkErrors(err, res);
+    next(err);
   }
 };
 
 //POST /cards — создаёт карточку
-export const createCard = async (req, res) => {
+export const createCard = async (req, res, next) => {
   try {
     const { name, link } = req.body;
     const card = await Card.create({
@@ -26,28 +25,28 @@ export const createCard = async (req, res) => {
     await card.populate('owner');
     res.status(StatusCodes.CREATED).send(card);
   } catch (err) {
-    checkErrors(err, res);
+    next(err);
   }
 };
 
 //DELETE /cards/:cardId — удаляет карточку по идентификатору
-export const deleteCard = async (req, res) => {
+export const deleteCard = async (req, res, next) => {
   try {
     const cards = await Card.findById(req.params.cardId)
       .orFail(() => new NotFoundError('card'))
       .populate('owner');
     if (cards.owner._id.toString() !== req.user._id) {
-      throw new UnauthorizedError();
+      throw new ForbiddenError();
     }
     await cards.deleteOne();
     res.status(StatusCodes.OK).send(cards);
   } catch (err) {
-    checkErrors(err, res);
+    next(err);
   }
 };
 
 // PUT /cards/:cardId/likes — поставить лайк карточке
-export const putLike = async (req, res) => {
+export const putLike = async (req, res, next) => {
   try {
     const cardWithUpdatedLike = await Card.findByIdAndUpdate(
       req.params.cardId,
@@ -58,12 +57,12 @@ export const putLike = async (req, res) => {
       .populate('owner');
     res.status(StatusCodes.OK).send(cardWithUpdatedLike);
   } catch (err) {
-    checkErrors(err, res);
+    next(err);
   }
 };
 
 // DELETE /cards/:cardId/likes — убрать лайк с карточки
-export const deleteLike = async (req, res) => {
+export const deleteLike = async (req, res, next) => {
   try {
     const cardWithDeletedLike = await Card.findByIdAndUpdate(
       req.params.cardId,
@@ -74,6 +73,6 @@ export const deleteLike = async (req, res) => {
       .populate('owner');
     res.status(StatusCodes.OK).send(cardWithDeletedLike);
   } catch (err) {
-    checkErrors(err, res);
+    next(err);
   }
 };

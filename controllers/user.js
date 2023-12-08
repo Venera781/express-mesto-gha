@@ -2,41 +2,55 @@ import User from '../models/user.js';
 import checkErrors from '../errors/checkErrors.js';
 import NotFoundError from '../errors/NotFoundError.js';
 import { StatusCodes } from 'http-status-codes';
+import bcrypt from 'bcryptjs';
+import { jwt } from 'jsonwebtoken';
+import { JWT_EXPIRES, JWT_SECRET } from '../constants/jwt.js';
 
 //GET /users — возвращает всех пользователей
-export const getAllUser = async (req, res) => {
+export const getAllUser = async (req, res, next) => {
   try {
     const users = await User.find({});
     res.status(StatusCodes.OK).send(users);
   } catch (err) {
-    checkErrors(err, res);
+    next(err);
   }
 };
 
 //GET /users/:userId - возвращает пользователя по _id
-export const getUserId = async (req, res) => {
+export const getUserId = async (req, res, next) => {
   try {
     const userById = await User.findById(req.params.userId).orFail(
       () => new NotFoundError('user'),
     );
     res.status(StatusCodes.OK).send(userById);
   } catch (err) {
-    checkErrors(err, res);
+    next(err);
   }
 };
 
 //POST /users — создаёт пользователя
-export const postUser = async (req, res) => {
+export const createUser = async (req, res, next) => {
   try {
-    const { name, about, avatar } = req.body;
-    const newUser = await User.create({ name, about, avatar });
+    const { name, about, avatar, email, password } = req.body;
+    if (password.length < 8) {
+      throw new Error('Пароль должен быть не меньше 8 символов');
+    }
+    const saltRounds = 10;
+    const hash = await bcrypt.hash(req.body.password, saltRounds);
+    const newUser = await User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    });
     res.status(StatusCodes.CREATED).send(newUser);
   } catch (err) {
-    checkErrors(err, res);
+    next(err);
   }
 };
 
-const updateUserData = async (res, getUserData) => {
+const updateUserData = async (res, next, getUserData) => {
   try {
     const [userId, userData] = getUserData();
     const updatedUser = await User.findByIdAndUpdate(userId, userData, {
@@ -45,22 +59,52 @@ const updateUserData = async (res, getUserData) => {
     }).orFail(() => new NotFoundError('user'));
     res.status(StatusCodes.OK).send(updatedUser);
   } catch (err) {
-    checkErrors(err, res);
+    next(err);
   }
 };
 
 //PATCH /users/me — обновляет профиль
-export const updateUser = (req, res) => {
-  updateUserData(res, () => {
+export const updateUser = (req, res, next) => {
+  updateUserData(res, next, () => {
     const { name, about } = req.body;
     return [req.user._id, { name, about }];
   });
 };
 
 //PATCH /users/me/avatar — обновляет аватар
-export const updateAvatar = (req, res) => {
-  updateUserData(res, () => {
+export const updateAvatar = (req, res, next) => {
+  updateUserData(res, next, () => {
     const { avatar } = req.body;
     return [req.user._id, { avatar }];
   });
+};
+
+//контроллер аутентификации
+export const login = async (req, res, next) => {
+  try {
+    const userInDb = await User.findUserByCredentials(email, password);
+    const token = jwt.sign({ _id: userInDb._id }, JWT_SECRET, {
+      expiresIn: JWT_EXPIRES,
+    });
+    res
+      .status(StatusCodes.OK)
+      .cookie('jwt', token, {
+        maxAge: 7 * 24 * 3600 * 1000,
+        httpOnly: true,
+        sameSite: true,
+      })
+      .send();
+  } catch (err) {
+    next(err);
+  }
+};
+
+//GET /users/me — возвращает информацию о текущем пользователе
+export const getCurrentUser = async (req, res, next) => {
+  try {
+    const user = await User.findUserByCredentials(email, password);
+    res.status(StatusCodes.OK).send(user);
+  } catch (err) {
+    next(err);
+  }
 };

@@ -1,14 +1,24 @@
 import mongoose from 'mongoose';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
+import { isCelebrateError } from "celebrate";
 
-const checkErrors = (err, res) => {
+const checkErrors = (err, res, next) => {
+  if (res.headersSent) {
+    return next(err);
+  }
   if (
     err instanceof mongoose.Error.CastError ||
-    err instanceof mongoose.Error.ValidationError
+    err instanceof mongoose.Error.ValidationError||
+    isCelebrateError(err)
   ) {
     return res.status(StatusCodes.BAD_REQUEST).send({
       message: `Переданы некорректные данные: ${err.message}`,
     });
+  }
+  if (err.name === 'MongoServerError' && err.code === 11000) {
+    return res
+      .status(StatusCodes.CONFLICT)
+      .send({ message: 'Пользователь уже существует' });
   }
   if ('httpCode' in err) {
     return res.status(err.httpCode).send({ message: err.message });
