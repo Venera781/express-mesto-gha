@@ -11,7 +11,7 @@ import { celebrate, Joi } from 'celebrate';
 
 const router = Router();
 router.get('/', auth, getAllUser);
-router.get('/users/me', auth, getCurrentUser);
+router.get('/me', auth, getCurrentUser);
 router.get(
   '/:userId',
   celebrate({

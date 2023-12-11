@@ -43,7 +43,12 @@ export const createUser = async (req, res, next) => {
       email,
       password: hash,
     });
-    res.status(StatusCodes.CREATED).send(newUser);
+    res.status(StatusCodes.CREATED).send({
+      name: newUser.name,
+      about: newUser.about,
+      avatar: newUser.avatar,
+      email: newUser.email,
+    });
   } catch (err) {
     next(err);
   }
@@ -81,6 +86,7 @@ export const updateAvatar = (req, res, next) => {
 //контроллер аутентификации
 export const login = async (req, res, next) => {
   try {
+    const { email, password } = req.body;
     const userInDb = await User.findUserByCredentials(email, password);
     const token = jwt.sign({ _id: userInDb._id }, JWT_SECRET, {
       expiresIn: JWT_EXPIRES,
@@ -101,8 +107,10 @@ export const login = async (req, res, next) => {
 //GET /users/me — возвращает информацию о текущем пользователе
 export const getCurrentUser = async (req, res, next) => {
   try {
-    const user = await User.findUserByCredentials(email, password);
-    res.status(StatusCodes.OK).send(user);
+    const userById = await User.findById(req.user._id).orFail(
+      () => new NotFoundError('user'),
+    );
+    res.status(StatusCodes.OK).send(userById);
   } catch (err) {
     next(err);
   }
