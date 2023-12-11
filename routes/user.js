@@ -14,27 +14,28 @@ router.get('/', auth, getAllUser);
 router.get('/me', auth, getCurrentUser);
 router.get(
   '/:userId',
+  auth,
   celebrate({
     params: Joi.object().keys({
       userId: Joi.string().alphanum().length(24),
     }),
   }),
-  auth,
   getUserId,
 );
 router.patch(
   '/me',
+  auth,
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().required().min(2).max(30),
       about: Joi.string().required().min(2).max(30),
     }),
   }),
-  auth,
   updateUser,
 );
 router.patch(
   '/me/avatar',
+  auth,
   celebrate({
     body: Joi.object().keys({
       avatar: Joi.string()
@@ -42,7 +43,6 @@ router.patch(
         .uri({ scheme: ['http', 'https'] }),
     }),
   }),
-  auth,
   updateAvatar,
 );
 
