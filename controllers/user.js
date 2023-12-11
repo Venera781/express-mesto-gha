@@ -99,7 +99,7 @@ export const login = async (req, res, next) => {
         httpOnly: true,
         sameSite: true,
       })
-      .send();
+      .send({token});
   } catch (err) {
     next(err);
   }
