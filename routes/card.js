@@ -6,7 +6,7 @@ import {
   putLike,
   deleteLike,
 } from '../controllers/card.js';
-import auth from '../middlewares/auth.js'
+import { auth } from '../middlewares/auth.js';
 
 const router = Router();
 
