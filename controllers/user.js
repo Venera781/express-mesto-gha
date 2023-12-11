@@ -1,4 +1,4 @@
-import User from '../models/user.js';
+import User, { findUserByCredentials } from '../models/user.js';
 import NotFoundError from '../errors/NotFoundError.js';
 import { StatusCodes } from 'http-status-codes';
 import bcrypt from 'bcryptjs';
@@ -48,6 +48,7 @@ export const createUser = async (req, res, next) => {
       about: newUser.about,
       avatar: newUser.avatar,
       email: newUser.email,
+      id: newUser._id,
     });
   } catch (err) {
     next(err);
@@ -87,7 +88,7 @@ export const updateAvatar = (req, res, next) => {
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    const userInDb = await User.findUserByCredentials(email, password);
+    const userInDb = await findUserByCredentials(email, password);
     const token = jwt.sign({ _id: userInDb._id }, JWT_SECRET, {
       expiresIn: JWT_EXPIRES,
     });

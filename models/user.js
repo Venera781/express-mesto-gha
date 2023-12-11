@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import UnauthorizedError from '../errors/UnauthorizedError.js';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -26,7 +27,11 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
 });
-userSchema.statics.findUserByCredentials = async function (email, password) {
+
+const User = mongoose.model('user', userSchema);
+
+export default User;
+export const findUserByCredentials = async function (email, password) {
   const userInDb = await User.findOne({ email }).select('+password');
   if (!userInDb) {
     throw new UnauthorizedError();
@@ -38,5 +43,3 @@ userSchema.statics.findUserByCredentials = async function (email, password) {
   delete userInDb.password;
   return userInDb;
 };
-
-export default mongoose.model('user', userSchema);
