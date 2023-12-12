@@ -8,7 +8,7 @@ import {
 } from '../controllers/card.js';
 import { auth } from '../middlewares/auth.js';
 import { celebrate, Joi } from 'celebrate';
-import validateUrl from '../helpers.js'
+import {validateUrl} from '../helpers.js'
 
 const router = Router();
 
