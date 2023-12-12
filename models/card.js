@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import isURL from 'validator/lib/isURL.js';
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -10,6 +11,7 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
+    validate: isURL,
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -19,7 +21,7 @@ const cardSchema = new mongoose.Schema({
   likes: {
     type: [mongoose.Schema.Types.ObjectId],
     default: [],
-    ref: 'user'
+    ref: 'user',
   },
   createdAt: {
     type: mongoose.Schema.Types.Date,

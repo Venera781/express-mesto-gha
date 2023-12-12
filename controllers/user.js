@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { JWT_EXPIRES, JWT_SECRET } from '../constants/jwt.js';
+import BadRequestError from '../errors/BadRequestError.js';
 
 //GET /users — возвращает всех пользователей
 export const getAllUser = async (req, res, next) => {
@@ -32,7 +33,7 @@ export const createUser = async (req, res, next) => {
   try {
     const { name, about, avatar, email, password } = req.body;
     if (password.length < 8) {
-      throw new Error('Пароль должен быть не меньше 8 символов');
+      throw new BadRequestError();
     }
     const saltRounds = 10;
     const hash = await bcrypt.hash(req.body.password, saltRounds);

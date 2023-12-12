@@ -8,6 +8,7 @@ import {
 } from '../controllers/card.js';
 import { auth } from '../middlewares/auth.js';
 import { celebrate, Joi } from 'celebrate';
+import validateUrl from '../helpers.js'
 
 const router = Router();
 
@@ -20,7 +21,7 @@ router.post(
       name: Joi.string().required().min(2).max(30),
       link: Joi.string()
         .required()
-        .uri({ scheme: ['http', 'https'] }),
+        .custom(validateUrl),
     }),
   }),
   createCard,
@@ -40,7 +41,7 @@ router.put(
   auth,
   celebrate({
     params: Joi.object().keys({
-      cardId: Joi.string().alphanum().length(24),
+      cardId: Joi.string().required().hex().length(24),
     }),
   }),
   putLike,
@@ -50,7 +51,7 @@ router.delete(
   auth,
   celebrate({
     params: Joi.object().keys({
-      cardId: Joi.string().alphanum().length(24),
+      cardId: Joi.string().required().hex().length(24),
     }),
   }),
   deleteLike,

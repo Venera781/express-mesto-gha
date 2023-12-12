@@ -11,6 +11,9 @@ export default class NotFoundError extends Error {
       case 'user':
         super('Не найден пользователь');
         return;
+      case 'path':
+        super('Не найден путь');
+        return;
       default:
         super('Не найден элемент');
         return;

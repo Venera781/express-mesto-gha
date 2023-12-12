@@ -8,6 +8,7 @@ import {
 } from '../controllers/user.js';
 import { auth } from '../middlewares/auth.js';
 import { celebrate, Joi } from 'celebrate';
+import validateUrl from '../helpers.js'
 
 const router = Router();
 router.get('/', auth, getAllUser);
@@ -17,7 +18,7 @@ router.get(
   auth,
   celebrate({
     params: Joi.object().keys({
-      userId: Joi.string().alphanum().length(24),
+      userId: Joi.string().required().hex().length(24),
     }),
   }),
   getUserId,
@@ -40,7 +41,7 @@ router.patch(
     body: Joi.object().keys({
       avatar: Joi.string()
         .required()
-        .uri({ scheme: ['http', 'https'] }),
+        .custom(validateUrl),
     }),
   }),
   updateAvatar,

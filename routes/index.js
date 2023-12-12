@@ -1,9 +1,9 @@
 import card from './card.js';
 import user from './user.js';
 import { Router } from 'express';
-import { StatusCodes } from 'http-status-codes';
 import { celebrate, Joi } from 'celebrate';
 import { login, createUser } from '../controllers/user.js';
+import NotFoundError from '../errors/NotFoundError.js';
 
 const routes = Router();
 
@@ -34,8 +34,8 @@ routes.post(
 );
 routes.use('/users', user);
 routes.use('/cards', card);
-routes.use('*', (req, res) => {
-  res.status(StatusCodes.NOT_FOUND).send({ message: 'Путь не найден' });
+routes.use('*', (req, res, next) => {
+  next(new NotFoundError('path'));
 });
 
 export default routes;
