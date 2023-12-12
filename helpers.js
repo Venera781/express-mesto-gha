@@ -5,5 +5,5 @@ export const validateUrl = (value, helper) => {
     return helper.message('URL is invalid');
   }
 
-  return true;
+  return value;
 };
