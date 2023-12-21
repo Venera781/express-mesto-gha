@@ -7,7 +7,7 @@ import checkErrors from './errors/checkErrors.js';
 const app = express();
 const { PORT = 3000 } = process.env;
 
-await mongoose.connect('mongodb://localhost:127.0.0.1:27017/mestodb');
+await mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 console.log('MongoDB connected');
 
 app.use(express.json());
